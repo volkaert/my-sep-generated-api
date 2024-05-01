@@ -64,18 +64,11 @@
             <version>4.5.1</version>
             <scope>test</scope>
         </dependency>
-        <!--
+        <!-- https://www.baeldung.com/java-logging-rolling-file-appenders -->
         <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.6</version>
         </dependency>
-        -->
     </dependencies>
 </project>
