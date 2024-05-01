@@ -1,0 +1,4 @@
+my-sep-generated-api:
+  hello:
+    message: Hello World from PRD env !
+    
