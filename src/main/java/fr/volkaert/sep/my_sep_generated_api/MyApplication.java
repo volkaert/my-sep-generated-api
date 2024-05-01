@@ -1,5 +1,8 @@
 package fr.volkaert.sep.my_sep_generated_api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.CreateOrderRequest;
 import fr.volkaert.sep.my_sep_generated_api.order.api.v1.impl.OrderService;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +10,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.time.Instant;
 
 @SpringBootApplication
 public class MyApplication {
@@ -31,5 +36,12 @@ public class MyApplication {
                 }
             }
         };
+    }
+
+    @Bean
+    public ObjectMapper createObjectMapper() {
+        return new ObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .registerModule(new JavaTimeModule());
     }
 }
