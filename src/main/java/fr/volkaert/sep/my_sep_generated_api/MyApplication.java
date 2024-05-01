@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.volkaert.sep.my_sep_generated_api.order.api.v1.impl.OrderService;
 import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.CreateOrderRequest;
+import fr.volkaert.sep.my_sep_generated_api.order.db.OrderEntity;
+import fr.volkaert.sep.my_sep_generated_api.order.db.OrderRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @SpringBootApplication
 public class MyApplication {
@@ -23,17 +28,29 @@ public class MyApplication {
     public static void main(String[] args) { SpringApplication.run(MyApplication.class, args); }
 
     @Bean
-    public CommandLineRunner run(OrderService orderService) throws Exception {
+    public CommandLineRunner run(OrderService orderService, OrderRepository orderRepository) throws Exception {
         return (String[] args) -> {
             System.out.println("My Application started...");
 
             if (insertFakeDataInDatabase) {
                 System.out.println("Inserting fake data in database...");
 
-                for (int i = 1; i <= 100; i++) {
+                for (int id = 1; id <= 100; id++) {
+                    OffsetDateTime now = OffsetDateTime.now();
+                    OrderEntity orderEntityToCreate = OrderEntity.builder()
+                            .id("" + id)
+                            .someStringData("someStringValue" + id)
+                            .createdAt(now)
+                            .updatedAt(now)
+                            .build();
+                    orderRepository.save(orderEntityToCreate);
+                    System.out.println(String.format("Order with id %s created", id));
+
+                    /*
                     orderService.createOrder(CreateOrderRequest.builder()
                             .someStringData("someStringData" + i)
                             .build());
+                     */
                 }
             }
         };
