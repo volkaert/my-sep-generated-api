@@ -1,4 +1,4 @@
-package fr.volkaert.sep.my_sep_generated_api.order.api.v1;
+package fr.volkaert.sep.my_sep_generated_api.order.api.v1.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +23,7 @@ public class Order {
     @NotBlank
     String id; // typically a UUID but we use String for more flexibility
 
-    String someUsefulStringData;
+    String someStringData;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss[.SSS]XXX", timezone = "UTC")
     @NotNull

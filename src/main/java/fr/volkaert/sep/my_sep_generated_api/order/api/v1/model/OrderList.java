@@ -1,4 +1,4 @@
-package fr.volkaert.sep.my_sep_generated_api.order.api.v1;
+package fr.volkaert.sep.my_sep_generated_api.order.api.v1.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,12 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Request to create an Order resource/object. It is a DTO Data Transfer Object.")
-public class CreateOrderRequest {
-    String someUsefulStringData;
+@Schema(description = "Order list resource/object produced and consumed by the API. It is a DTO Data Transfer Object.")
+public class OrderList {
+
+    List<Order> orders = new ArrayList<>();
 }

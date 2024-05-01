@@ -22,7 +22,7 @@ public class OrderEntity {
     private String id;
 
     @Column(nullable = false)
-    private String someUsefulStringData;
+    private String someStringData;
 
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
     private OffsetDateTime createdAt;
