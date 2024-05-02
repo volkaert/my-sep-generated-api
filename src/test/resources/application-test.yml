@@ -1,3 +1,16 @@
 # see https://www.baeldung.com/spring-boot-testing
-#spring.datasource.url = jdbc:h2:mem:test
-#spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.H2Dialect
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:myDB
+    username:
+    password:
+  jpa:
+    hibernate:
+      database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        use_sql_comments: true
+        format_sql: true
+        enable_lazy_load_no_trans: true

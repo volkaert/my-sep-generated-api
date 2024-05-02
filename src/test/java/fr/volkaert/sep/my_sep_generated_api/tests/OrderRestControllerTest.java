@@ -2,13 +2,11 @@ package fr.volkaert.sep.my_sep_generated_api.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.CreateOrderRequest;
+import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.SearchOrdersRequest;
 import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.UpdateOrderRequest;
 import fr.volkaert.sep.my_sep_generated_api.order.db.OrderEntity;
 import fr.volkaert.sep.my_sep_generated_api.order.db.OrderRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.validation.constraints.NotBlank;
@@ -31,12 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 //  See https://www.baeldung.com/spring-boot-testing
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @ActiveProfiles("test")
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ComponentScan("fr.volkaert")
+@TestPropertySource(locations = "classpath:application-test.yml")
 public class OrderRestControllerTest {
 
 
@@ -176,6 +177,97 @@ public class OrderRestControllerTest {
         mvc.perform(get("/v1/orders/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(8)
+    public void givenOrder_whenSearchEventsUsingGET_thenStatus200() throws Exception {
+        repository.deleteAll();
+        for (int id = 1; id <= 50; id++) {
+            OrderEntity orderEntity = createOrderEntity("" + id);
+            repository.save(orderEntity);
+        }
+        mvc.perform(get("/v1/orders/_search?page=1&pageSize=20&sort=updatedAt"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders[0].id").value("1"))
+                .andExpect(jsonPath("orders[19].id").value("20"))
+                .andExpect(jsonPath("orders[20]").doesNotExist());
+        mvc.perform(get("/v1/orders/_search?page=2&pageSize=20&sort=updatedAt"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders[0].id").value("21"))
+                .andExpect(jsonPath("orders[19].id").value("40"))
+                .andExpect(jsonPath("orders[20]").doesNotExist());
+        mvc.perform(get("/v1/orders/_search?page=3&pageSize=20&sort=updatedAt"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders[0].id").value("41"))
+                .andExpect(jsonPath("orders[9].id").value("50"))
+                .andExpect(jsonPath("orders[10]").doesNotExist());
+        mvc.perform(get("/v1/orders/_search?page=4&pageSize=20&sort=updatedAt"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders").exists())
+                .andExpect(jsonPath("orders[0]").doesNotExist());
+    }
+
+    @Test
+    @Order(9)
+    public void givenOrder_whenSearchEventsUsingPOST_thenStatus200() throws Exception {
+        repository.deleteAll();
+        for (int id = 1; id <= 50; id++) {
+            OrderEntity orderEntity = createOrderEntity("" + id);
+            repository.save(orderEntity);
+        }
+
+        SearchOrdersRequest searchOrdersRequest = SearchOrdersRequest.builder()
+                .page(1)
+                .pageSize(20)
+                .sort("updatedAt")
+                .build();
+        mvc.perform(post("/v1/orders/_search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchOrdersRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders[0].id").value("1"))
+                .andExpect(jsonPath("orders[19].id").value("20"))
+                .andExpect(jsonPath("orders[20]").doesNotExist());
+        searchOrdersRequest.setPage(2);
+        mvc.perform(post("/v1/orders/_search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchOrdersRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders[0].id").value("21"))
+                .andExpect(jsonPath("orders[19].id").value("40"))
+                .andExpect(jsonPath("orders[20]").doesNotExist());
+        searchOrdersRequest.setPage(3);
+        mvc.perform(post("/v1/orders/_search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchOrdersRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders[0].id").value("41"))
+                .andExpect(jsonPath("orders[9].id").value("50"))
+                .andExpect(jsonPath("orders[10]").doesNotExist());
+        searchOrdersRequest.setPage(4);
+        mvc.perform(post("/v1/orders/_search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchOrdersRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalOrderCount").value(50))
+                .andExpect(jsonPath("orders").exists())
+                .andExpect(jsonPath("orders[0]").doesNotExist());
     }
 
     private OrderEntity createOrderEntity(@NotBlank String id) {

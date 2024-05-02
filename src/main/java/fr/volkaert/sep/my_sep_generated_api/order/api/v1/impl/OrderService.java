@@ -1,14 +1,15 @@
 package fr.volkaert.sep.my_sep_generated_api.order.api.v1.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.CreateOrderRequest;
-import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.Order;
-import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.UpdateOrderRequest;
+import fr.volkaert.sep.my_sep_generated_api.order.api.v1.model.*;
 import fr.volkaert.sep.my_sep_generated_api.order.db.OrderEntity;
 import fr.volkaert.sep.my_sep_generated_api.order.db.OrderRepository;
 import fr.volkaert.sep.my_sep_generated_api.order.errors.OrderNotFoundException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -78,6 +79,23 @@ public class OrderService {
         OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
         if (orderEntity == null) throw new OrderNotFoundException(orderId);
         orderRepository.deleteById(orderId);
+    }
+
+    public OrderPage searchOrders(SearchOrdersRequest request) {
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime fromCreatedAt = request.getFromCreatedAt() != null ? request.getFromCreatedAt() : now.minusDays(1);
+        OffsetDateTime toCreatedAt = request.getToCreatedAt() != null ? request.getToCreatedAt() : now;
+        OffsetDateTime fromUpdatedAt = request.getFromUpdatedAt() != null ? request.getFromUpdatedAt() : now.minusDays(1);
+        OffsetDateTime toUpdatedAt = request.getToUpdatedAt() != null ? request.getToUpdatedAt() : now;
+        String sortAsString = request.getSort();
+        Sort sort = sortAsString.startsWith("-") ? Sort.by(Sort.Direction.DESC, sortAsString.substring(1)) : Sort.by(sortAsString);
+        Page<Order> orders = orderRepository.findBy(fromCreatedAt, toCreatedAt, fromUpdatedAt, toUpdatedAt,
+                        PageRequest.of(request.getPage()-1, request.getPageSize(), sort))
+                .map(this::toOrder);
+        return OrderPage.builder()
+                .totalOrderCount(orders.getTotalElements())
+                .orders(orders.getContent())
+                .build();
     }
 
     private OrderEntity toOrderEntity(@NotNull Order order) {

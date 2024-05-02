@@ -62,9 +62,9 @@ public class MyApplication {
         // see https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
         return builder
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .failOnUnknownProperties(false)
-                .defaultViewInclusion(false)
-                .modules(new JavaTimeModule())
+                //.failOnUnknownProperties(false)
+                //.defaultViewInclusion(false)
+                //.modules(new JavaTimeModule())
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
     }
