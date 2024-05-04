@@ -32,8 +32,7 @@ public class OrderService {
 
     @SneakyThrows
     public Order getOrderById(@NotBlank String orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
-        if (orderEntity == null) throw new OrderNotFoundException(orderId);
+        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
         Order order = toOrder(orderEntity);
         log.info("Returning order " + objectMapper.writeValueAsString(order));
         return order;
@@ -63,9 +62,8 @@ public class OrderService {
     }
 
     @SneakyThrows
-    public Order updateOrder(@NotBlank String orderId, @Valid UpdateOrderRequest updateOrderRequest) {
-        OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
-        if (orderEntity == null) throw new OrderNotFoundException(orderId);
+    public Order updateOrder(@Valid UpdateOrderRequest updateOrderRequest) {
+        OrderEntity orderEntity = orderRepository.findById(updateOrderRequest.getId()).orElseThrow(() -> new OrderNotFoundException(updateOrderRequest.getId()));
         OffsetDateTime now = OffsetDateTime.now();
         orderEntity.setSomeStringData(updateOrderRequest.getSomeStringData());
         orderEntity.setUpdatedAt(now);
@@ -76,8 +74,7 @@ public class OrderService {
     }
 
     public void deleteOrder(@NotBlank String orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
-        if (orderEntity == null) throw new OrderNotFoundException(orderId);
+        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
         orderRepository.deleteById(orderId);
     }
 

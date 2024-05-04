@@ -150,6 +150,7 @@ public class OrderRestControllerTest {
         repository.save(orderEntity1);
 
         UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder()
+                .id("1")
                 .someStringData("someStringValueUpdated")
                 .build();
 

@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Order list resource/object produced and consumed by the API. It is a DTO Data Transfer Object.")
+@Schema(description = "List of Orders (because a JSON response should NOT be an array, but an object which contains an array). It is a DTO Data Transfer Object.")
 public class OrderList {
 
     @ArraySchema(arraySchema = @Schema(description = "List of orders", implementation = Order.class, requiredMode = Schema.RequiredMode.REQUIRED))

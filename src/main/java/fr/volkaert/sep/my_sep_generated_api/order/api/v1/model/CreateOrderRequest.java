@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Request to create an Order resource/object. It is a DTO Data Transfer Object.")
+@Schema(description = "Parameters for the creation o an Order. It is a DTO Data Transfer Object.")
 public class CreateOrderRequest {
     String someStringData;
 }

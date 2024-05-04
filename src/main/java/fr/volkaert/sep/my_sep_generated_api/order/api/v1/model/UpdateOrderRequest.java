@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,5 +16,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Request to update an Order resource/object. It is a DTO Data Transfer Object.")
 public class UpdateOrderRequest {
+
+    @NotBlank
+    String id;  // typically a UUID but we use String for more flexibility
+
     String someStringData;
 }

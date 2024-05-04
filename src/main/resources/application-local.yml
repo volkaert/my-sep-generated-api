@@ -1,4 +1,5 @@
 my-sep-generated-api:
   hello:
     message: Hello World from LOCAL env !
-    
+  tests:
+    insert-fake-data-in-database-at-startup: true

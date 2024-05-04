@@ -17,7 +17,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Order resource/object produced and consumed by the API. It is a DTO Data Transfer Object.")
+@Schema(description = "Order object. It is a DTO Data Transfer Object.")
 public class Order {
 
     @NotBlank

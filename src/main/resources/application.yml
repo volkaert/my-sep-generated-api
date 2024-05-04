@@ -5,5 +5,4 @@ server:
 my-sep-generated-api:
   hello:
     message: SHOULD BE OVERRIDEN BY ENV !
-  tests:
-    insert-fake-data-in-database-at-startup: true
+

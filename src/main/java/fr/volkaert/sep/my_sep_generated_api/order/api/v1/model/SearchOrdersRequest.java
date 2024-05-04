@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Request to search Order resource/objects. It is a DTO Data Transfer Object.")
+@Schema(description = "Parameters for the search of Orders. It is a DTO Data Transfer Object.")
 public class SearchOrdersRequest {
     OffsetDateTime fromCreatedAt;
     OffsetDateTime toCreatedAt;
